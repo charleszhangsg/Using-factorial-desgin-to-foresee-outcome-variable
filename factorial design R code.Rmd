@@ -1,0 +1,152 @@
+---
+title: "What condiments make stewed chicken more delicious"
+author: |
+  | Last name: Zhang
+  | First name: Min 
+  | Student ID: 1004709201
+  | Course section: STA305 H1S Sec L0101 / L0201 or STA1004 H1S L0201, W2022
+date: "April 8, 2022"
+output: pdf_document
+fontsize: 10pt
+
+---
+
+\textcolor{blue}{Description}
+
+Cooking is one of my favorite things I would like to do during my leisure time. The stewed chicken is a traditional homemade dish that involves many spices and condiments. The good taste also depends on the amount of condiments added on, such as oyster sauce and sesame oil. Cooking wine is another secret weapon to the success of this dish, as “alcohol helps release flavor molecules in foods and assists in dissolving fats” (Hanson, 2021). The traditional rice wine and white wine are two main types of cooking wines used in most cooking. Thus, I designed an experiment to see whether the types of cooking wine (first factor), oyster sauce (second factor), and sesame oil (third factor) will influence in the taste of stewed chicken and that it will help improve our cooking for stewed chicken. 
+
+\textcolor{blue}{Materials and Methods}
+
+The experiment will implement a $2^3$ factorial design, with a table shown below:
+
+$\begin{tabular}{|c|c|c|}
+  \hline
+  Factors & level 1 & level 2   \\
+  \hline 
+  cooking wine & white wine (-1) & rice wine (+1) \\
+  \hline
+  oyster sauce & no (-1) & yes (+1) \\ 
+  \hline
+  sesame oil & no (-1) & yes (+1) \\
+  \hline
+  \end{tabular}$
+  
+The design of the experiment shown above indicates that all three factors (types of wine, oyster sauce, and sesame oil) have two levels. We conducted a replicated $2^3$ factorial design, with a total of 16 experiments. We asked two of our neighbors who we do not know to try the taste of stewed chicken without knowing the recipe of each dish on two different day. Each audience tasted a bite of stewed chicken and had washed their mouth before trying another bite. The response variable 'taste' is measured by a score (between 1 to 10) received from these two audience, while 1 means the dish has poorest taste and 10 means the dish is super delicious. 
+
+To avoid unnecessary waste, we used small portion of raw chicken each time, approximately 50 grams and marinated in the same way, which only included salt and pepper and excluded the use of cooking wine, oyster sauce, or sesame oil before the experiment. 
+
+\newpage
+#Data from the expriments:
+
+$\begin{tabular}{|c|c|c|c|}
+  \hline
+  cooking wine & oyster sauce & sesame oil & taste   \\
+  \hline 
+  1 & 1 & 1 & 9.5 \\
+  \hline
+  1 & 1 & -1 & 8 \\ 
+  \hline
+  1 & -1 & 1 & 6.5 \\
+  \hline 
+  1 & -1 & -1 & 6.5 \\
+  \hline 
+  -1 & 1 & 1 & 7 \\
+  \hline 
+  -1 & 1 & -1 & 7.5 \\
+  \hline 
+  -1 & -1 & 1 & 6 \\
+  \hline 
+  -1 & -1 & -1 & 5 \\
+  \hline 
+  1 & 1 & 1 & 7 \\
+  \hline 
+  1 & -1 & 1 & 7 \\
+  \hline 
+  1 & -1 & -1 & 7 \\
+  \hline 
+  1 & -1 & -1 & 5.5 \\
+  \hline 
+  -1 & 1 & 1 & 8 \\
+  \hline 
+  -1 & 1 & -1 & 7 \\
+  \hline 
+  -1 & -1 & 1 & 6.5 \\
+  \hline 
+  -1 & -1 & -1 & 4 \\
+  \hline
+  \end{tabular}$
+
+In the table above, "C" represents the type of cooking wine used in the cooking, "O" means oyster sauce, and "S" means sesame oil. This explanation applies to all models throughout this project. 
+
+\textcolor{blue}{Statistical analysis}
+
+The linear model for $2^3$ factorial design is:
+$$
+Y_i=\beta_0+\beta_1X_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i1}X_{i2}+\beta_5X_{i2}X_{i3}+\beta_6X_{i1}X_{i3}+\beta_7X_{i1}X_{i2}X_{i3}+\epsilon_i
+$$
+where $Y_i$ means the taste score (between 1-10) from $i_{th}$ experiment, $X_{i1}$ is -1 if we added white rice and 1 if it is rice wine. Similarly, $X_{i2}$ is -1 if we do not oyster sauce and 1 if we did. $X_{i3}$ is -1 if we did not add sesame oil and 1 if we did. $\epsilon_i$ is the error term for $i_{th}$ term. 
+
+```{r, echo=FALSE,out.width="30%"}
+data1<- read.csv(file="data1.csv")
+mod <- lm(taste~C*O*S, data=data1)
+summary(mod)
+```
+\newpage
+The summary of the model gives an initial overview of the data. We can see that p-value for estimated coefficient of cooking wine is 0.00721 which is less than 0.05, so we reject the null hypothesis ($H_0 = 0$) and conclude that there is an adequate evidence supporting the fact that adding cooking wine will actually result in a better taste of the stewed chicken. The p-value for oyster sauce factor is also much less than 0.05, providing enough evidence that oyster sauce will give a better flavor to the dish. Similarly, p-value for sesame oil is 0.00381 which is less than the threshold of 0.05 and that it is statistically significant, meaning that adding sesame oil will result in a positive score to the model. All other interaction terms have much larger p-values and that we fail to reject the null hypothesis and they are statistically insignificant.
+
+```{r, echo=FALSE,out.width="30%"}
+library("FrF2")
+cubePlot(mod, "C", "O", "S", main = "cube plot for stewed chicken taste")
+```
+
+Since each individual factor is statistically significant, cube plot provides predicated taste score associated with three different levels of factors, with a total of 12 comparisons in $2^3$ factorial design. For instance, when we are cooking with rice wine and sesame oil and without oyster sauce, the predicated taste score will be 6.75.
+
+```{r, echo=FALSE,out.width="30%"}
+interaction.plot(data1$C,data1$O,data1$taste,type="l")
+interaction.plot(data1$C,data1$S,data1$taste,type="l")
+interaction.plot(data1$O,data1$S,data1$taste,type="l")
+```
+
+The interactions plots illustrate that there are no interactions between factors, showing the independence of factors and also supporting the fact that p-value for these factors are all less than 0.05.   
+
+\newpage
+We then multiply the estimated coefficient by 2 to get main effects:
+
+\begin{tabular}{|c|c|}
+  \hline
+  factor & effect   \\
+  \hline 
+  type of wine & 1.00 \\
+  \hline
+  oyster sauce & 2.00 \\ 
+  \hline
+  sesame oil & 1.125 \\
+  \hline
+  type of wine : oyster sauce & $3.574*10^{-16}$\\
+  \hline
+  type of wine : sesame oil & 0.125  \\
+  \hline
+  oyster sauce : sesame oil & -0.125\\
+  \hline
+  type of wine : oyster sauce : sesame oil & 0.625 \\
+  \hline
+  \end{tabular}
+
+\textcolor{blue}{Estimated variance of each observation:}
+The standard error for all significant terms is $0.1398*2 = 0.2796$, thus, the estimated variance is $0.2796^2=0.0782$. 
+
+```{r, echo=FALSE}
+mod <- lm(taste~C*O*S, data=data1)
+round(2*confint.lm(mod),2)
+```
+Remarks on the confidence Interval:
+
+The confidence interval listed above shows we are 95% confident that the true mean will be within this range. We can see that the CIs that does not include 0 are intercept (13.11,14.39), type of cooking wine(0.36, 1.64), oyster sauce(1.36, 2.64), and sesame oil(0.48,1.77). The CI of all other interaction effects include 0. This can be explained that adding rice wine, oyster sauce, and sesame oil will result in a better taste of stewed chicken, as we are 95% confident that the effects will be positive. In other words, there is no evidence that can prove interaction terms will be significant to the taste, as they are all independent from the CI. 
+
+\textcolor{blue}{Result and discussion}
+
+By implementing a $2^3$ factorial design with a replication, we can see that adding rice wine will increase taste score by 1, while adding oyster sauce will generally double the taste score, and sesame oil will add score by 1.125 times. Through the data analysis, we can clearly see the positive trend of adding either one of these three condiments to stewed chicken dish. One factor that surprised us is that the audience can taste the difference between adding rice wine and white wine, as the liquor will basically evaporate in the cooking and that people will not really taste the difference. One assumption could be that rice wine has stronger aroma than white wine. This predicated model also confirms the assumption that oyster sauce plays an important part in the success of this dish, as its umami and rich savoriness give stewed chicken more flavors. 
+
+\textcolor{blue}{Reference}
+
+Hanson, Carol. 2021. Why Cooking With Wine Makes Food Taste Better. [online] Allrecipes. Available at: <https://www.allrecipes.com/article/cooking-wine-makes-food-taste-better/>
